@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, Index, OneToMany } from "typeorm";
+import { Wallet } from "./Wallet";
 
 @Entity()
 export class User {
@@ -18,5 +19,14 @@ export class User {
     @Index()
     @Column({ nullable: true })
     token: string;
+
+    @Column()
+    merchant: boolean;
+
+    @Column({ type: "json", nullable: true })
+    info: string;
+
+    @OneToMany(type => Wallet, wallet => wallet.user)
+    wallets: Wallet[];
 
 }
