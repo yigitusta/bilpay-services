@@ -1,21 +1,19 @@
 import "reflect-metadata";
-import express from "express";
+import { createExpressServer } from "routing-controllers";
 import { createConnection } from "typeorm";
-import * as bodyParser from "body-parser";
 import morgan from "morgan";
-import cors from "cors";
-import routes from "./routes";
+import AuthController from "./controllers/AuthController";
 import { initBearerStrategy } from "./config/passport";
 
 initBearerStrategy();
 
-const app = express();
+const app = createExpressServer({
+    cors: true,
+    controllers: [AuthController]
+});
 
 createConnection().then(async connection => {
-    app.use(cors());
-    app.use(bodyParser.json());
     app.use(morgan("combined"));
-    app.use("/", routes);
 
     app.listen(process.env.PORT || 3000, function () {
         console.log("Listening on port 3000!");

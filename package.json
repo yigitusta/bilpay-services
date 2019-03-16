@@ -34,7 +34,9 @@
     "passport-oauth2": "^1.4.0",
     "pg": "^7.8.1",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.14"
+    "routing-controllers": "^0.7.7",
+    "typeorm": "^0.2.14",
+    "cors": "^2.8.5"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
@@ -48,7 +50,6 @@
     "@types/passport-local": "^1.0.33",
     "@types/passport-oauth2": "^1.4.8",
     "concurrently": "^4.1.0",
-    "cors": "^2.8.5",
     "nodemon": "^1.18.10",
     "tslint": "^5.13.0",
     "typescript": "^3.3.3333"
