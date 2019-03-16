@@ -1,12 +1,10 @@
-import { JsonController, Param, Body, Get, Post, Put, Delete } from "routing-controllers";
+import { JsonController, Body, Post } from "routing-controllers";
 import { getRepository } from "typeorm";
 import { getManager } from "typeorm";
 import bcrypt from "bcryptjs";
-import Stellar from "stellar-sdk";
-import axios from "axios";
 import { ResponseModel } from "../types/index";
 import { User } from "../entity/User";
-import { Wallet } from "../entity/Wallet";
+import { createWallet } from "../services/Blockchain";
 
 @JsonController()
 export default class AuthController {
@@ -46,18 +44,7 @@ export default class AuthController {
       user.merchant = false;
       user.password = bcrypt.hashSync(password, 8);
       await getManager().save(user);
-      // create test wallet
-      const wallet = new Wallet();
-      const keypair = Stellar.Keypair.random();
-
-      wallet.public = keypair.publicKey();
-      wallet.secret = keypair.secret();
-      wallet.sandbox = true;
-      wallet.api_url = "https://horizon-testnet.stellar.org";
-
-      const address = `https://friendbot.stellar.org/?addr=${keypair.publicKey()}`;
-      const response = await axios.get(address);
-      console.log(response);
+      const wallet = await createWallet("sandbox");
       wallet.user = user;
       await getManager().save(wallet);
       return { success: true, message: "User created.", payload: { email: user.email } };
