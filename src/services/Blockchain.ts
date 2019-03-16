@@ -17,6 +17,6 @@ export async function createWallet(type: "sandbox" | "live"): Promise<Wallet> {
   return wallet;
 }
 
-export async function sendBilcoin(receiver: string) {
+export async function sendBilcoin(sender: Wallet, receiver: Wallet, amount: number) {
 
 }

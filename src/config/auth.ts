@@ -6,7 +6,8 @@ export default async (action: Action) => {
     const bearer = action.request.headers["authorization"];
     try {
         const token = bearer.split(" ")[1];
-        return await getRepository(User).findOne({ where: [{ token: token }] });
+        return await getRepository(User).
+            findOne({ where: [{ token: token }], relations: ["wallets"] });
     } catch (e) {
         console.log(e);
     }

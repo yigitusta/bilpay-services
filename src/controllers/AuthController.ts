@@ -1,6 +1,7 @@
 import { JsonController, Body, Post } from "routing-controllers";
 import { getRepository } from "typeorm";
 import { getManager } from "typeorm";
+import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { ResponseModel } from "../types";
 import { User } from "../entity/User";
@@ -10,7 +11,7 @@ import { createWallet } from "../services/Blockchain";
 export default class AuthController {
 
   @Post("/login")
-  async login(@Body() body: any): Promise<ResponseModel> {
+  async login(@Body() body: { email: string, password: string }): Promise<ResponseModel> {
     const { email, password } = body;
     const authFail: ResponseModel = { success: false, message: "Email or password is wrong." };
 
@@ -21,7 +22,9 @@ export default class AuthController {
     const user = await getRepository(User).findOne({ where: [{ email }] });
     if (user) {
       if (bcrypt.compareSync(password, user.password)) {
-        const token = "asdfgh" + Math.floor(Math.random() * 1000000);
+        const hash = crypto.createHash("sha256");
+        hash.update(crypto.randomBytes(2048));
+        const token = hash.digest("hex");
         await getRepository(User).update({ email }, { token });
         return { success: true, message: "Login Success", payload: { token } };
       } else {
@@ -33,7 +36,7 @@ export default class AuthController {
   }
 
   @Post("/register")
-  async register(@Body() body: any): Promise<ResponseModel> {
+  async register(@Body() body: { email: string, password: string }): Promise<ResponseModel> {
     const { email, password } = body;
     if (!(email && password)) {
       return { success: false, message: "Email or password is missing" };
