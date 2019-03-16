@@ -2,14 +2,13 @@ import "reflect-metadata";
 import { createExpressServer } from "routing-controllers";
 import { createConnection } from "typeorm";
 import morgan from "morgan";
-import AuthController from "./controllers/AuthController";
-import { initBearerStrategy } from "./config/passport";
-
-initBearerStrategy();
+import currentUserChecker from "./config/auth";
+import controllers from "./controllers";
 
 const app = createExpressServer({
+    currentUserChecker,
     cors: true,
-    controllers: [AuthController]
+    controllers
 });
 
 createConnection().then(async connection => {

@@ -5,14 +5,14 @@ import "../entity/Wallet";
 
 export async function createWallet(type: "sandbox" | "live"): Promise<Wallet> {
   const wallet = new Wallet();
-  const keypair = Stellar.Keypair.random();
+  const keyPair = Stellar.Keypair.random();
 
-  wallet.public = keypair.publicKey();
-  wallet.secret = keypair.secret();
+  wallet.public = keyPair.publicKey();
+  wallet.secret = keyPair.secret();
   wallet.sandbox = true;
   wallet.api_url = "https://horizon-testnet.stellar.org";
 
-  await axios.get(`https://friendbot.stellar.org/?addr=${keypair.publicKey()}`);
+  await axios.get(`https://friendbot.stellar.org/?addr=${keyPair.publicKey()}`);
 
   return wallet;
 }

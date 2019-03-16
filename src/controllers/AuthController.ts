@@ -2,7 +2,7 @@ import { JsonController, Body, Post } from "routing-controllers";
 import { getRepository } from "typeorm";
 import { getManager } from "typeorm";
 import bcrypt from "bcryptjs";
-import { ResponseModel } from "../types/index";
+import { ResponseModel } from "../types";
 import { User } from "../entity/User";
 import { createWallet } from "../services/Blockchain";
 
