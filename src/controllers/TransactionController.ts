@@ -13,7 +13,9 @@ export default class TransactionController {
         const sendingWallet = user.wallets.find(w => w.sandbox === Boolean(sandbox));
         const receivingUser = await getRepository(User).findOne({ where: [{ email }], relations: ["wallets"] }); // handle invalid user
         const receivingWallet = receivingUser.wallets.find(w => w.sandbox === Boolean(sandbox));
-        const response = await sendBilcoin(sendingWallet, receivingWallet, amount);
-        return { success: true, message: "success", payload: receivingWallet };
+        const result = await sendBilcoin(sendingWallet, receivingWallet, amount);
+        return { success: true, message: "success", payload: result };
     }
+
+    // todo : get amount controller
 }

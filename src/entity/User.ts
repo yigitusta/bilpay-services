@@ -8,16 +8,14 @@ export class User {
     id: number;
 
     @Index()
-    @Column({
-        length: 30
-    })
+    @Column({length: 30})
     email: string;
 
     @Column()
     password: string;
 
     @Index()
-    @Column({ nullable: true })
+    @Column({nullable: true})
     token: string;
 
     @Column()
