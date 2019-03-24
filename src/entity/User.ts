@@ -18,6 +18,12 @@ export class User {
     @Column({nullable: true})
     token: string;
 
+    @Column({default: false})
+    verified: boolean;
+
+    @Column({nullable: true})
+    verification_code: number;
+
     @Column()
     merchant: boolean;
 

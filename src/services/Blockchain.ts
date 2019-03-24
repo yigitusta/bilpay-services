@@ -1,7 +1,11 @@
 import Stellar, { Asset, Operation, TransactionBuilder, Account } from "stellar-sdk";
+import { getLogger } from "log4js";
 import axios from "axios";
 import { Wallet } from "../entity/Wallet";
+import { BlockchainError } from "../types";
 import "../entity/Wallet";
+
+const logger = getLogger("blockchain");
 
 export async function createWallet(type: "sandbox" | "live"): Promise<Wallet> {
     const wallet = new Wallet();
@@ -12,7 +16,12 @@ export async function createWallet(type: "sandbox" | "live"): Promise<Wallet> {
     wallet.sandbox = true;
     wallet.api_url = "https://horizon-testnet.stellar.org";
 
-    await axios.get(`https://friendbot.stellar.org/?addr=${keyPair.publicKey()}`);
+    try {
+        await axios.get(`https://friendbot.stellar.org/?addr=${keyPair.publicKey()}`);
+    } catch (e) {
+        logger.error(e);
+        throw new BlockchainError("There was a problem connecting to the blockchain.");
+    }
 
     return wallet;
 }

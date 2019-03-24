@@ -1,56 +1,43 @@
 import { JsonController, Body, Post } from "routing-controllers";
-import { getRepository } from "typeorm";
-import { getManager } from "typeorm";
-import crypto from "crypto";
-import bcrypt from "bcryptjs";
-import { ResponseModel } from "../types";
-import { User } from "../entity/User";
-import { createWallet } from "../services/Blockchain";
+import * as auth from "../services/Auth";
+import { ResponseType, BlockchainError, LoginError, RegistrationError } from "../types";
 
 @JsonController()
 export default class AuthController {
 
   @Post("/login")
-  async login(@Body() body: { email: string, password: string }): Promise<ResponseModel> {
+  async login(@Body() body: { email: string, password: string }): Promise<ResponseType> {
     const { email, password } = body;
-    const authFail: ResponseModel = { success: false, message: "Email or password is wrong." };
 
-    if (!email || !password) {
-      return authFail;
+    if (!(email && password)) {
+      return { success: false, message: "Email or password is missing." };
     }
 
-    const user = await getRepository(User).findOne({ where: [{ email }] });
-    if (user) {
-      if (bcrypt.compareSync(password, user.password)) {
-        const hash = crypto.createHash("sha256");
-        hash.update(crypto.randomBytes(2048));
-        const token = hash.digest("hex");
-        await getRepository(User).update({ email }, { token });
-        return { success: true, message: "Login Success", payload: { token } };
-      } else {
-        return authFail;
+    try {
+      const token = await auth.login(email, password);
+      return { success: true, message: "Login Success", payload: { token } };
+    } catch (e) {
+      if (e instanceof LoginError) {
+        throw { success: false, message: e.message };
       }
-    } else {
-      return authFail;
+      return { success: false, message: "Login is unsuccessful." };
     }
   }
 
   @Post("/register")
-  async register(@Body() body: { email: string, password: string }): Promise<ResponseModel> {
+  async register(@Body() body: { email: string, password: string }): Promise<ResponseType> {
     const { email, password } = body;
     if (!(email && password)) {
       return { success: false, message: "Email or password is missing" };
     }
-    else {
-      const user = new User();
-      user.email = email;
-      user.merchant = false;
-      user.password = bcrypt.hashSync(password, 8);
-      await getManager().save(user);
-      const wallet = await createWallet("sandbox");
-      wallet.user = user;
-      await getManager().save(wallet);
-      return { success: true, message: "User created.", payload: { email: user.email } };
+    try {
+      const user = await auth.register(email, password);
+      return { success: true, message: "Registration is successful.", payload: { email: user.email } };
+    } catch (e) {
+      if (e instanceof BlockchainError || e instanceof RegistrationError) {
+        return { success: false, message: e.message };
+      }
+      return { success: false, message: "Registration is unsuccessful." };
     }
   }
 }
