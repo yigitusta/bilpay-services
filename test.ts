@@ -4,7 +4,7 @@ import axios from "axios";
 (async function() {
   const keypair = Stellar.Keypair.random();
 
-  const address = `https://friendbot.stellar.org/?addr=${keypair.publicKey()}`;
+  const address = `https://friendbot.stellar.org/?addr=${encodeURIComponent(keypair.publicKey())}`;
 
   const server = new Stellar.Server("https://horizon-testnet.stellar.org");
 

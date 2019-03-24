@@ -13,6 +13,9 @@ log4js.configure({
         },
         default: {
             type: "file", filename: "default-error.log"
+        },
+        bilchain: {
+            type: "file", filename: "bilchain-error.log"
         }
     },
     categories: {

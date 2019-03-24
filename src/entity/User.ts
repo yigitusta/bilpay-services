@@ -24,7 +24,7 @@ export class User {
     @Column({nullable: true})
     verification_code: number;
 
-    @Column()
+    @Column({default: false})
     merchant: boolean;
 
     @Column({ type: "json", nullable: true })

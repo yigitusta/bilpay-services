@@ -2,7 +2,7 @@ import { getManager, getRepository } from "typeorm";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { User } from "../entity/User";
-import { createWallet } from "./Blockchain";
+import { createWallet } from "./Bilchain";
 import { RegistrationError, LoginError } from "../types";
 
 export const complete = async () => {
@@ -17,9 +17,8 @@ export const register = async (email: string, password: string): Promise<User> =
 
   const user = new User();
   user.email = email;
-  user.merchant = false;
   user.password = bcrypt.hashSync(password, 8);
-  const wallet = await createWallet("sandbox");
+  const wallet = await createWallet();
   await getManager().save(user);
   wallet.user = user;
   await getManager().save(wallet);

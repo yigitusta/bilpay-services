@@ -3,11 +3,10 @@ import { getLogger } from "log4js";
 import axios from "axios";
 import { Wallet } from "../entity/Wallet";
 import { BlockchainError } from "../types";
-import "../entity/Wallet";
 
 const logger = getLogger("blockchain");
 
-export async function createWallet(type: "sandbox" | "live"): Promise<Wallet> {
+export async function createWallet(): Promise<Wallet> {
     const wallet = new Wallet();
     const keyPair = Stellar.Keypair.random();
 
